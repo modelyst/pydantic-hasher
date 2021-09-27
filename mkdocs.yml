@@ -1,0 +1,83 @@
+#   Copyright 2021 Modelyst LLC
+#
+#   Licensed under the Apache License, Version 2.0 (the "License");
+#   you may not use this file except in compliance with the License.
+#   You may obtain a copy of the License at
+#
+#       http://www.apache.org/licenses/LICENSE-2.0
+#
+#   Unless required by applicable law or agreed to in writing, software
+#   distributed under the License is distributed on an "AS IS" BASIS,
+#   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#   See the License for the specific language governing permissions and
+#   limitations under the License.
+
+---
+site_name: pydasher
+site_description: pydasher framework, high performance, easy to learn, fast to code, ready for production
+site_url: https://www.pydasher.modelyst.com/
+edit_uri: ""
+copyright: "© 2021, Modelyst LLC. All rights reserved."
+theme:
+  name: material
+  custom_dir: docs/overrides
+  font:
+    text: Roboto
+  palette:
+    - scheme: default
+      accent: indigo
+      toggle:
+        icon: material/weather-night
+        name: Switch to dark mode
+    - scheme: slate
+      accent: white
+      toggle:
+        icon: material/weather-sunny
+        name: Switch to light mode
+  icon:
+    repo: fontawesome/brands/github-alt
+  logo: img/logo.png
+  favicon: img/favicon.png
+  language: en
+  features:
+    - navigation.instant
+repo_name: modelyst/pydasher
+repo_url: https://github.com/modelyst/pydasher
+markdown_extensions:
+  - toc:
+      permalink: true
+  - markdown_include.include:
+      base_path: docs
+  - attr_list
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_div_format ''
+  - pymdownx.tabbed
+  - markdown.extensions.codehilite:
+      guess_lang: true
+  - codehilite
+plugins:
+  - search
+  - mkdocstrings:
+      watch:
+        - src/pydasher
+      handlers:
+        python:
+          selection:
+            filters:
+              - "!^_"         # exlude all members starting with _
+              - "^__init__$"  # but always include __init__ modules and methods
+nav:
+  - pydasher: index.md
+  - Getting Started: usage.md
+  - Installation: installation.md
+  - License: license.md
+extra_css:
+  - css/termynal.css
+  - css/custom.css
+extra_javascript:
+  - https://unpkg.com/mermaid@8.4.6/dist/mermaid.min.js
+  - js/termynal.js
+  - js/custom.js

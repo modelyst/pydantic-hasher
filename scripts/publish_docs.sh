@@ -1,3 +1,4 @@
+#!/bin/sh
 #   Copyright 2021 Modelyst LLC
 #
 #   Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,8 +13,8 @@
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
 
-"""Helpful functions for serializing and deterministically hashing pydantic base models."""
-from pydasher.base import HashMixIn
-from pydasher.serialization import from_dict, hasher, to_dict
-
-__version__ = "0.0.1"
+# Invalidate
+pdocs as_markdown pydasher -o ./docs/reference -t ./docs/templates --overwrite
+mkdocs build
+aws s3 --profile $1 sync ./site s3://www.pydasher.modelyst.com --region us-west-1
+aws cloudfront --profile $1 create-invalidation --distribution-id E3KZHZFM25DYN2 --paths "/*"

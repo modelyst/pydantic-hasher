@@ -1,3 +1,4 @@
+#!/usr/bin/env bash
 #   Copyright 2021 Modelyst LLC
 #
 #   Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,8 +13,5 @@
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
 
-"""Helpful functions for serializing and deterministically hashing pydantic base models."""
-from pydasher.base import HashMixIn
-from pydasher.serialization import from_dict, hasher, to_dict
-
-__version__ = "0.0.1"
+echo "Mypy running on : $1"
+mypy --config setup.cfg $1

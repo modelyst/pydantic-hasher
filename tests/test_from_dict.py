@@ -12,8 +12,8 @@
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
 
-"""Helpful functions for serializing and deterministically hashing pydantic base models."""
-from pydasher.base import HashMixIn
-from pydasher.serialization import from_dict, hasher, to_dict
+from pydasher import from_dict
 
-__version__ = "0.0.1"
+
+def test_blank_dict():
+    assert from_dict({}) == {}
