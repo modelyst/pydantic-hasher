@@ -16,6 +16,8 @@ from typing import Optional
 
 from pydantic import BaseModel
 
+from pydasher.base import HashMixIn
+
 
 class Address(BaseModel):
     number: str
@@ -41,3 +43,17 @@ class BookWithPrice(BaseModel):
     author: Person
     publication_year: int
     price: float
+
+
+class Dummy(HashMixIn, BaseModel):
+    key_1: str
+    key_2: str
+    key_3: float
+    _hashexclude_ = {"key_3"}
+
+
+class NestedDummy(HashMixIn, BaseModel):
+    key_1: str
+    key_2: Dummy
+    key_3: float
+    _hashexclude_ = {"key_3"}

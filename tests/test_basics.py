@@ -13,13 +13,14 @@
 #   limitations under the License.
 
 from datetime import date, datetime
-from uuid import UUID, uuid4
+from uuid import UUID
 
 from hypothesis import given
 from hypothesis import strategies as st
 from pydantic import BaseModel
 
-from pydasher import from_dict, hasher, to_dict
+from pydasher.base import HashMixIn
+from pydasher.serialization import get_id_dict, hasher
 
 from .strategies import book_strat
 
@@ -27,7 +28,7 @@ from .strategies import book_strat
 def serial_test(thing):
     hash_val = hasher(thing)
     assert isinstance(hash_val, str)
-    new_thing = from_dict(to_dict(thing))
+    new_thing = thing.parse_obj(thing.dict())
     assert hasher(new_thing) == hash_val
 
 
@@ -41,7 +42,6 @@ class DummyClass(BaseModel):
     key_2: int
     key_3 = "test"
     ex_key: str
-
     _hashexclude_ = {"ex_key"}
 
 
@@ -58,31 +58,39 @@ def test_exclude():
     dummy_4 = DummyClassNoExclude(key_1="1", key_2=0, ex_key="2")
 
     assert hasher(dummy_1) == hasher(dummy_2)
-    assert to_dict(dummy_1) != to_dict(dummy_2)
-    assert to_dict(dummy_1, id_only=True) == to_dict(dummy_2, id_only=True)
+    assert dummy_1.dict() != dummy_2.dict()
+    assert get_id_dict(dummy_1) == get_id_dict(dummy_2)
     assert hasher(dummy_1) != hasher(dummy_3)
     assert hasher(dummy_2) != hasher(dummy_3)
     assert type(dummy_4) != type(dummy_1)
-    assert "ex_key" in to_dict(dummy_4, id_only=True)
+    assert "ex_key" in get_id_dict(dummy_4)
 
 
-class DummyClass2(BaseModel):
+class DummyClass2(HashMixIn, BaseModel):
     time: datetime
-    date: date
     id_val: UUID
 
+    class Config:
+        json_encoders = {
+            UUID: lambda x: str(x),
+            datetime: lambda x: x.isoformat(),
+        }
 
-def test_non_builtin_serialization():
-    value = uuid4()
-    assert value == from_dict(to_dict(value, False))
-    value = datetime.now()
-    assert value == from_dict(to_dict(value, False))
-    value = datetime.now().date()
-    assert value == from_dict(to_dict(value, False))
-    value = DummyClass2(time=datetime.now(), id_val=uuid4(), date=datetime.now().date())
-    assert value == from_dict(to_dict(value, False))
+
+class DummyClass3(DummyClass2):
+    date: date
+
+    class Config:
+        json_encoders = {
+            date: lambda x: x.isoformat(),
+        }
 
 
 @given(st.builds(DummyClass2))
 def test_non_builtin_serialization_reverse(instance: DummyClass2):
+    serial_test(instance)
+
+
+@given(st.builds(DummyClass3))
+def test_non_builtin_serialization_reverse_subclass(instance: DummyClass3):
     serial_test(instance)

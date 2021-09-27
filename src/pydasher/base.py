@@ -12,19 +12,17 @@
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
 
-from typing import TYPE_CHECKING, Any, ClassVar, Set
+from typing import Any, ClassVar, Optional, Set
 from uuid import UUID
 
-from pydasher.serialization import JSONABLE_TYPE, from_dict, hasher, to_dict
-
-if TYPE_CHECKING:
-    from pydantic import BaseModel
+from pydasher.serialization import JSONABLE_TYPE, get_id_dict, hasher
 
 
 class HashMixIn:
     """A mixin for pydantic BaseModels to add a deterministic hash."""
 
     _hashexclude_: ClassVar[Set[str]] = set()
+    _hashinclude_: ClassVar[Optional[Set[str]]] = None
 
     def __eq__(self, other: Any) -> bool:
         """
@@ -49,12 +47,10 @@ class HashMixIn:
         return hasher(self)
 
     @property
-    def uuid(self) -> str:
-        return str(UUID(self.hash).hex)
+    def uuid(self) -> UUID:
+        return UUID(hex=self.hex)
 
-    def to_dict(self, id_only: bool = False) -> JSONABLE_TYPE:
-        return to_dict(self, id_only)
-
-    @staticmethod
-    def from_dict(input_dict: dict) -> "BaseModel":
-        return from_dict(input_dict)
+    def _id_dict(self) -> JSONABLE_TYPE:
+        config = getattr(self, "__config__", object())
+        encoders = getattr(config, "json_encoders", {})
+        return get_id_dict(self, encoders)
