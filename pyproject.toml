@@ -1,0 +1,23 @@
+[tool.poetry]
+authors = ["Michael Statt <michael.statt@modelyst.io>"]
+description = "A small set of utility functions for deterministically hashing pydantic base-models."
+license = "Apache-2.0"
+name = "pydasher"
+version = "0.0.1"
+
+[tool.poetry.dependencies]
+pydantic = "^1.8.2"
+python = ">=3.7,<4.0"
+
+[tool.poetry.dev-dependencies]
+black = "^21.9b0"
+flake8 = "^3.9.2"
+hypothesis = "^6.23.0"
+isort = "^5.9.3"
+mypy = "^0.910"
+pytest = "^6.2.5"
+pytest-sugar = "^0.9.4"
+
+[build-system]
+build-backend = "poetry.core.masonry.api"
+requires = ["poetry-core>=1.0.0"]
