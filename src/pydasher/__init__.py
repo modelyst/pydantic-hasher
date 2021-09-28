@@ -16,4 +16,4 @@
 from pydasher.base import HashMixIn
 from pydasher.serialization import hasher
 
-__version__ = "0.0.1"
+__version__ = "0.0.2"
