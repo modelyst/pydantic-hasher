@@ -13,6 +13,7 @@
 #   limitations under the License.
 
 from datetime import date, datetime
+from json import dumps, loads
 from uuid import UUID
 
 from hypothesis import given
@@ -22,7 +23,7 @@ from pydantic import BaseModel
 from pydasher.base import HashMixIn
 from pydasher.serialization import get_id_dict, hasher
 
-from .strategies import book_strat
+from .strategies import book_strat, json_strat
 
 
 def serial_test(thing):
@@ -94,3 +95,9 @@ def test_non_builtin_serialization_reverse(instance: DummyClass2):
 @given(st.builds(DummyClass3))
 def test_non_builtin_serialization_reverse_subclass(instance: DummyClass3):
     serial_test(instance)
+
+
+@given(json_strat())
+def test_raw_json(thing):
+    thing_copy = loads(dumps(thing))
+    assert hasher(thing_copy) == hasher(thing)

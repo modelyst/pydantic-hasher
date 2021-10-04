@@ -72,8 +72,8 @@ def get_id_dict(thing: Any, encoders: dict = {}) -> JSONABLE_TYPE:
         return {
             **metadata,
             **{
-                key: get_id_dict(value, encoders)
-                for key, value in thing
+                key: get_id_dict(getattr(thing, key), encoders)
+                for key in thing.__fields__
                 if filter_func(key)
             },
         }
