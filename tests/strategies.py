@@ -39,7 +39,7 @@ def json_strat(draw, allow_base_outputs: bool = True, max_leaves=4):
             st.text(printable), python_simples
         )
     else:
-        base = python_simples
+        base = python_simples  # type: ignore
     json_data = draw(
         st.recursive(
             base,
