@@ -58,7 +58,7 @@ def get_git_version(version_: str):
 if __name__ == "__main__":
     from pydasher import __version__
 
-    git_version = get_git_version(version)
+    git_version = get_git_version(__version__)
     version_pth = join(ROOT, "src/pydasher/git_version")
     with open(version_pth, "w") as f:
         f.write(git_version)

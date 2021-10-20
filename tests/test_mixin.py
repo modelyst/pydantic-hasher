@@ -44,3 +44,19 @@ class DummyList(HashMixIn, BaseModel):
 
 class DummySet(HashMixIn, BaseModel):
     list_val: Set[int]
+
+
+def test_hashability():
+    class Dummy(HashMixIn, BaseModel):
+        x: int = 1
+        y: str = "a"
+        z: str = "a"
+        _hashinclude_ = {"x", "y"}
+
+    obj_1 = Dummy()
+    obj_2 = Dummy(x="2")
+    obj_3 = Dummy(y="2")
+    obj_4 = Dummy(z=1)
+    obj_5 = Dummy(x=2)
+    set_list = {obj_1, obj_2, obj_3, obj_4, obj_5}
+    assert len(set_list) == 3

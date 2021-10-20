@@ -12,8 +12,25 @@
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
 
-"""Helpful functions for serializing and deterministically hashing pydantic base models."""
-from pydasher.base import HashMixIn
-from pydasher.serialization import hasher, json_dumps, json_loads
+from enum import Enum
 
-__version__ = "0.0.3"
+
+class DefaultTypes(str, Enum):
+    DICT = "dict"
+    SET = "set"
+    TUPLE = "tuple"
+    DATETIME = "datetime"
+    TIMEDELTA = "timedelta"
+    DATE = "date"
+    BASE_MODEL = "basemodel"
+    UUID = "uuid"
+    # TODO: Add encoders and decoders
+    TIME = "time"
+    ENUM = "enum"
+    IPV4_ADDRESS = "IPv4Address"
+    IPV4_NETWORK = "IPv4Network"
+    IPV6_ADDRESS = "IPv6Address"
+    IPV6_NETWORK = "IPv6Network"
+    BYTES = "bytes"
+    DECIMAL = "decimal"
+    PATH = "path"

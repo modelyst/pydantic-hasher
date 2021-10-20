@@ -21,7 +21,7 @@ from hypothesis import strategies as st
 from pydantic import BaseModel
 
 from pydasher.base import HashMixIn
-from pydasher.serialization import get_id_dict, hasher
+from pydasher.serialization import VALUE_NAME, hasher, serialize
 
 from .strategies import book_strat, json_strat
 
@@ -60,11 +60,11 @@ def test_exclude():
 
     assert hasher(dummy_1) == hasher(dummy_2)
     assert dummy_1.dict() != dummy_2.dict()
-    assert get_id_dict(dummy_1) == get_id_dict(dummy_2)
+    assert serialize(dummy_1) == serialize(dummy_2)
     assert hasher(dummy_1) != hasher(dummy_3)
     assert hasher(dummy_2) != hasher(dummy_3)
     assert type(dummy_4) != type(dummy_1)
-    assert "ex_key" in get_id_dict(dummy_4)
+    assert "ex_key" in serialize(dummy_4)[VALUE_NAME]
 
 
 class DummyClass2(HashMixIn, BaseModel):

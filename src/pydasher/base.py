@@ -15,10 +15,12 @@
 from typing import Any, ClassVar, Optional, Set
 from uuid import UUID
 
-from pydasher.serialization import JSONABLE_TYPE, get_id_dict, hasher
+from pydantic import BaseModel
+
+from pydasher.serialization import JSONABLE_TYPE, deserialize, hasher, serialize
 
 
-class HashMixIn:
+class HashMixIn(BaseModel):
     """A mixin for pydantic BaseModels to add a deterministic hash."""
 
     _hashexclude_: ClassVar[Set[str]] = set()
@@ -53,4 +55,13 @@ class HashMixIn:
     def _id_dict(self) -> JSONABLE_TYPE:
         config = getattr(self, "__config__", object())
         encoders = getattr(config, "json_encoders", {})
-        return get_id_dict(self, encoders)
+        return serialize(self, encoders, id_only=True)
+
+    def serialize(self) -> JSONABLE_TYPE:
+        config = getattr(self, "__config__", object())
+        encoders = getattr(config, "json_encoders", {})
+        return serialize(self, encoders=encoders)
+
+    @classmethod
+    def deserialize(self, serialized_data) -> JSONABLE_TYPE:
+        return deserialize(serialized_data)
