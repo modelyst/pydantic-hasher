@@ -12,12 +12,14 @@
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
 
-from typing import Any, ClassVar, Optional, Set
+from typing import Any, ClassVar, Optional, Set, Type, TypeVar
 from uuid import UUID
 
 from pydantic import BaseModel
 
 from pydasher.serialization import JSONABLE_TYPE, deserialize, hasher, serialize
+
+T = TypeVar("T")
 
 
 class HashMixIn(BaseModel):
@@ -60,8 +62,8 @@ class HashMixIn(BaseModel):
     def serialize(self) -> JSONABLE_TYPE:
         config = getattr(self, "__config__", object())
         encoders = getattr(config, "json_encoders", {})
-        return serialize(self, encoders=encoders)
+        return serialize(self, id_only=False, encoders=encoders)
 
     @classmethod
-    def deserialize(self, serialized_data) -> JSONABLE_TYPE:
+    def deserialize(cls: Type[T], serialized_data) -> T:
         return deserialize(serialized_data)

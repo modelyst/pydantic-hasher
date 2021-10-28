@@ -12,8 +12,10 @@
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
 
+
 import json
-from datetime import date, datetime, timedelta
+from datetime import date, datetime, time, timedelta
+from decimal import Decimal
 from hashlib import md5
 from typing import Any, Callable, Dict, Mapping, Sequence, Union
 from uuid import UUID
@@ -97,11 +99,15 @@ def serialize(thing: Any, encoders: dict = {}, id_only: bool = True) -> JSONABLE
             VALUE_NAME: {
                 key: serialize(getattr(thing, key, id_only), encoders)
                 for key in thing.__fields__
-                if id_only and filter_func(key)
+                if not id_only or filter_func(key)
             },
         }
     elif isinstance(thing, datetime):
         return {TYPE_NAME: DefaultTypes.DATETIME.value, VALUE_NAME: thing.isoformat()}
+    elif isinstance(thing, date):
+        return {TYPE_NAME: DefaultTypes.DATE.value, VALUE_NAME: thing.isoformat()}
+    elif isinstance(thing, time):
+        return {TYPE_NAME: DefaultTypes.TIME.value, VALUE_NAME: thing.isoformat()}
     elif isinstance(thing, timedelta):
         return {
             TYPE_NAME: DefaultTypes.TIMEDELTA.value,
@@ -109,6 +115,13 @@ def serialize(thing: Any, encoders: dict = {}, id_only: bool = True) -> JSONABLE
         }
     elif isinstance(thing, UUID):
         return {TYPE_NAME: DefaultTypes.UUID.value, VALUE_NAME: str(thing)}
+    elif isinstance(thing, Decimal):
+        return {TYPE_NAME: DefaultTypes.DECIMAL.value, VALUE_NAME: str(Decimal)}
+    elif isinstance(thing, bytes):
+        return {
+            TYPE_NAME: DefaultTypes.BYTES.value,
+            VALUE_NAME: thing.decode("utf-8"),
+        }
     elif type(thing) in encoders:
         return {TYPE_NAME: derived_type, VALUE_NAME: encoders[type(thing)](thing)}
     # Add new parsers here for any new datatypes
@@ -146,6 +159,12 @@ def deserialize(serialized_thing, decoders: Dict[str, Callable[[Any], Any]] = {}
         return date.fromisoformat(value)
     elif type_ == DefaultTypes.DATETIME:
         return datetime.fromisoformat(value)
+    elif type_ == DefaultTypes.TIME:
+        return time.fromisoformat(value)
+    elif type_ == DefaultTypes.DECIMAL:
+        return Decimal(value)
+    elif type_ == DefaultTypes.BYTES:
+        return bytes(value)
     elif type_ == DefaultTypes.BASE_MODEL:
         model_string = serialized_thing.pop("_base_model_type")
         model_type = import_string(model_string)
