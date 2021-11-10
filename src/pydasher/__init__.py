@@ -16,4 +16,4 @@
 from pydasher.base import HashMixIn
 from pydasher.serialization import hasher, json_dumps, json_loads
 
-__version__ = "0.0.0"
+__version__ = "0.0.11"
