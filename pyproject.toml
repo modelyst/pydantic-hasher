@@ -1,13 +1,13 @@
 [tool.poetry]
 authors = ["Michael Statt <michael.statt@modelyst.io>"]
 description = "A small set of utility functions for deterministically hashing pydantic base-models."
+include = ["src/pydasher/py.typed"]
 license = "Apache-2.0"
 name = "pydasher"
 packages = [
   {include = "pydasher", from = "src"},
 ]
-version = "0.0.11"
-
+version = "0.0.12"
 [tool.poetry.dependencies]
 markdown-include = {version = "0.6.0", optional = true}
 mkdocs = {version = "^1.1.2", optional = true}
@@ -30,6 +30,7 @@ mypy = "^0.910"
 pre-commit = "^2.15.0"
 pytest = "^6.2.5"
 pytest-sugar = "^0.9.4"
+rich = "^10.13.0"
 
 [tool.poetry.extras]
 docs = [

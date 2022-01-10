@@ -17,6 +17,7 @@ import json
 from datetime import date, datetime, time, timedelta
 from decimal import Decimal
 from hashlib import md5
+from pathlib import Path
 from typing import Any, Callable, Dict, Mapping, Sequence, Union
 from uuid import UUID
 
@@ -108,6 +109,8 @@ def serialize(thing: Any, encoders: dict = {}, id_only: bool = True) -> JSONABLE
         return {TYPE_NAME: DefaultTypes.DATE.value, VALUE_NAME: thing.isoformat()}
     elif isinstance(thing, time):
         return {TYPE_NAME: DefaultTypes.TIME.value, VALUE_NAME: thing.isoformat()}
+    elif isinstance(thing, Path):
+        return {TYPE_NAME: DefaultTypes.PATH.value, VALUE_NAME: str(thing)}
     elif isinstance(thing, timedelta):
         return {
             TYPE_NAME: DefaultTypes.TIMEDELTA.value,
@@ -161,6 +164,8 @@ def deserialize(serialized_thing, decoders: Dict[str, Callable[[Any], Any]] = {}
         return datetime.fromisoformat(value)
     elif type_ == DefaultTypes.TIME:
         return time.fromisoformat(value)
+    elif type_ == DefaultTypes.PATH:
+        return Path(value)
     elif type_ == DefaultTypes.DECIMAL:
         return Decimal(value)
     elif type_ == DefaultTypes.BYTES:
